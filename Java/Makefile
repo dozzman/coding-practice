@@ -1,5 +1,5 @@
 JAVAC=javac
-java=java
+JAVA=java
 
 SOURCES+=$(wildcard data_structures/*.java)
 SOURCES+=$(wildcard sorting/*.java)
@@ -8,10 +8,10 @@ CLASSES=$(SOURCES:.java=.class)
 all: $(CLASSES)
 
 clean:
-	-rm $(CLASSES)
+	-rm $(CLASSES) 
 
 runsort: sorting
-	java sorting/SortTester
+	$(JAVA) sorting/SortTester
 
 %.class: %.java
 	$(JAVAC) $<

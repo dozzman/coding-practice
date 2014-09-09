@@ -1,8 +1,8 @@
 OCAMLOPT=ocamlopt.opt
 OCAMLC=ocamlc.opt
-CMIOPTIONS=-c
-CMOOPTIONS=-c
-CMXOPTIONS=-c
+CMIOPTIONS=
+CMOOPTIONS=
+CMXOPTIONS=
 
 INTERFACES=$(wildcard *.mli)
 INTERFACE_OBJECTS=$(INTERFACES:.mli=.cmi)
@@ -16,13 +16,13 @@ SortTest: BubbleSort.cmx BSTree.cmx SortTest.cmx
 	$(OCAMLOPT) -o $@ $+
 
 %.cmx: %.ml
-	$(OCAMLOPT) -o $@ $(CMXOPTIONS) $<
+	$(OCAMLOPT) -o $@ -c $(CMXOPTIONS) $<
 
 %.cmi: %.mli
-	$(OCAMLOPT) -o $@ $(CMIOPTIONS) $<
+	$(OCAMLOPT) -o $@ -c $(CMIOPTIONS) $<
 
 %.cmo: %.ml
-	$(OCAMLC) -o $@ $(CMOOPTIONS) $<
+	$(OCAMLC) -o $@ -c $(CMOOPTIONS) $<
 clean:
 	-rm *.cmo *.cmi *.cmx *.o $(OUTPUTS)
 

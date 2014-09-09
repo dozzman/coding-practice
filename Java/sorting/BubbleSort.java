@@ -5,7 +5,7 @@ import java.util.*;
 
 public class BubbleSort extends Sorter
 {
-    void sort(Comparable<? super Object> array [])
+    public <T extends Comparable<T>> void sort(T array [])
     {
         boolean swapped = true;
         while (swapped == true)
