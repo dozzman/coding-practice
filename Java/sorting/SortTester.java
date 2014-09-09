@@ -17,7 +17,8 @@ public class SortTester
         Sorter bubbleSorter = new BubbleSort();
         Sorter insertionSorter = new InsertionSort();
         Sorter mergeSorter = new MergeSort();
-        mergeSorter.<Integer>sort(array);
+        Sorter quickSorter = new QuickSort();
+        quickSorter.<Integer>sort(array);
 
         System.out.println("After sorting");
 
