@@ -1,0 +1,6 @@
+*.class
+*.o
+*.cmi
+*.cmo
+*.cmx
+*.swp
