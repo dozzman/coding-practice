@@ -1,19 +1,19 @@
 JAVAC=javac
 java=java
 
-all: sorting
+SOURCES+=$(wildcard data_structures/*.java)
+SOURCES+=$(wildcard sorting/*.java)
+CLASSES=$(SOURCES:.java=.class)
 
-sorting: sorting/Sorter.class sorters sorting/SortTester.class
-
-sorters: sorting/BubbleSort.class
+all: $(CLASSES)
 
 clean:
-	rm sorting/*.class
+	-rm $(CLASSES)
 
 runsort: sorting
 	java sorting/SortTester
 
 %.class: %.java
-	javac $<
+	$(JAVAC) $<
 
 .PHONY: all sorting

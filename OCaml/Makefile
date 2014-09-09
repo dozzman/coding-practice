@@ -4,14 +4,16 @@ CMIOPTIONS=-c
 CMOOPTIONS=-c
 CMXOPTIONS=-c
 
-all: SortTest BSTree.cmo
+INTERFACES=$(wildcard *.mli)
+INTERFACE_OBJECTS=$(INTERFACES:.mli=.cmi)
+SOURCES=$(wildcard *.ml)
+OBJECTS=$(SOURCES:.ml=.cmx)
+OUTPUTS=SortTest
+
+all: $(INTERFACE_OBJECTS) $(OBJECTS) SortTest
 
 SortTest: BubbleSort.cmx BSTree.cmx SortTest.cmx
 	$(OCAMLOPT) -o $@ $+
-
-SortTest.cmx: SortTest.cmi
-
-BubbleSort.cmx: BubbleSort.cmi
 
 %.cmx: %.ml
 	$(OCAMLOPT) -o $@ $(CMXOPTIONS) $<
@@ -22,7 +24,6 @@ BubbleSort.cmx: BubbleSort.cmi
 %.cmo: %.ml
 	$(OCAMLC) -o $@ $(CMOOPTIONS) $<
 clean:
-	-rm *.cmi *.cmx *.o
-	-rm SortTest
+	-rm *.cmo *.cmi *.cmx *.o $(OUTPUTS)
 
 .PHONY: all clean
