@@ -10,14 +10,21 @@ public class SortTester
         Integer array[] = SortTester.randomIntArray(0,10,10);    
         for( Integer i : array)
         {
-            System.out.println(i);
+            System.out.print(i +", " );
+            System.out.println();
         }
 
         Sorter bubbleSorter = new BubbleSort();
-        bubbleSorter.<Integer>sort(array);
+        Sorter insertionSorter = new InsertionSort();
+        Sorter mergeSorter = new MergeSort();
+        mergeSorter.<Integer>sort(array);
+
+        System.out.println("After sorting");
+
         for( Integer i : array)
         {
-            System.out.println(i);
+            System.out.print(i +", " );
+            System.out.println();
         }
     }
 
@@ -30,5 +37,19 @@ public class SortTester
         }
 
         return array;
+    }
+
+    public static boolean testOrder(Integer array[])
+    {
+        int length = array.length;
+        for(int i = 1; i < length; i++)
+        {
+            if(array[i].compareTo(array[i-1]) < 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

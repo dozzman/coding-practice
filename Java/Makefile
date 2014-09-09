@@ -10,10 +10,10 @@ all: $(CLASSES)
 clean:
 	-rm $(CLASSES) 
 
-runsort: sorting
+runsort: all
 	$(JAVA) sorting/SortTester
 
 %.class: %.java
 	$(JAVAC) $<
 
-.PHONY: all sorting
+.PHONY: all
