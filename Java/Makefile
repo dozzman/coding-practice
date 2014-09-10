@@ -4,6 +4,10 @@ JAVA=java
 SOURCES+=$(wildcard data_structures/*.java)
 SOURCES+=$(wildcard sorting/*.java)
 CLASSES=$(SOURCES:.java=.class)
+JUNITPATH=junit-4.11.jar
+HAMCRESTPATH=hamcrest-core-1.3.jar
+CLASSPATH=.:$(JUNITPATH):$(HAMCRESTPATH)
+OPTIONS=-Xlint:unchecked
 
 all: $(CLASSES)
 
@@ -11,9 +15,12 @@ clean:
 	-rm $(CLASSES) 
 
 runsort: all
-	$(JAVA) sorting/SortTester
+	$(JAVA) -cp $(CLASSPATH) sorting/SortTester
+
+runstruct: all
+	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore data_structures.UnitTester
 
 %.class: %.java
-	$(JAVAC) $<
+	$(JAVAC) -cp $(CLASSPATH) $(OPTIONS) $<
 
 .PHONY: all
