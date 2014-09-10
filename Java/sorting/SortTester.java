@@ -7,12 +7,13 @@ public class SortTester
 {
     public static void main(String [] args)
     {
-        Integer array[] = SortTester.randomIntArray(0,10,10);    
+        Integer array[] = SortTester.randomIntArray(0,1000,100);
         for( Integer i : array)
         {
             System.out.print(i +", " );
-            System.out.println();
         }
+
+        System.out.println();
 
         Sorter bubbleSorter = new BubbleSort();
         Sorter insertionSorter = new InsertionSort();
@@ -24,8 +25,18 @@ public class SortTester
 
         for( Integer i : array)
         {
-            System.out.print(i +", " );
-            System.out.println();
+            System.out.print(i + ", " );
+        }
+
+        System.out.println();
+
+        if (testOrder( array ))
+        {
+            System.out.println("Array is sorted, success!");
+        }
+        else
+        {
+            System.out.println("Failed to sort array!");
         }
     }
 
