@@ -44,4 +44,37 @@ public class UnitTester
         random = Integer.valueOf((int)(Math.random() * 100));
         assertFalse("Failure - succeeded to push an empty stack", stack.push(random));
     }
+
+    @Test
+    public void queueTests()
+    {
+        Queue<Integer> queue = new Queue<>(100);
+
+        assertEquals("Failure - length non-zero at creation", 0, queue.length());
+        
+        // fill some array with random integers
+        Integer [] array = new Integer[10];
+        for(int i = 0; i < 10; i++)
+        {
+            array[i] = Integer.valueOf((int)(Math.random()*100));
+        }
+
+        for ( Integer i : array )
+        {
+            queue.enqueue(i);
+        }
+
+        assertEquals("Failure - incorrect number of elements in queue", 10, queue.length());
+
+        for ( int i = 0; i < 10; i++)
+        {
+            Integer integer = queue.dequeue();
+            assertNotNull("Failure - returned a null value", integer);
+            assertEquals("Failure - queue gave wrong numbers back", integer.intValue(), array[i].intValue());
+        }
+
+        assertNull("Failure - should be null", queue.dequeue());
+        assertEquals("Failure - queue should be empty", 0, queue.length());
+    }
 }
+
