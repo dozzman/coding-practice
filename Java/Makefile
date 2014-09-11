@@ -3,6 +3,7 @@ JAVA=java
 
 SOURCES+=$(wildcard data_structures/*.java)
 SOURCES+=$(wildcard sorting/*.java)
+SOURCES+=$(wildcard graphs/*.java)
 CLASSES=$(SOURCES:.java=.class)
 JUNITPATH=junit-4.11.jar
 HAMCRESTPATH=hamcrest-core-1.3.jar
@@ -19,6 +20,9 @@ runsort: all
 
 runstruct: all
 	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore data_structures.UnitTester
+
+rungraphs: all
+	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore graphs.UnitTester
 
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $(OPTIONS) $<
