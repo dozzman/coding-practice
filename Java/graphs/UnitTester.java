@@ -17,7 +17,6 @@ public class UnitTester
         for(int i = 0; i < vs.length; i++ )
         {
             vs[i] = new Vertex(new String(Integer.toString(i)));
-            System.out.println(vs[i]);
         }
 
         Edge [] es = new Edge[17];
@@ -41,5 +40,20 @@ public class UnitTester
         es[16] = new Edge(vs[7], vs[8], 16.0);
 
         g = new Graph(vs, es);
+    }
+
+    // BreadthFirstSearch tests
+    @Test
+    public void BreadthFirstSearchTests()
+    {
+        BreadthFirstSearch.perform(g, g.vertices[0]);
+        assertEquals("Failure - path calculated wrong", g.vertices[7].previous, g.vertices[3]);
+        assertEquals(2.0, g.vertices[7].minDistance, 0.0);
+
+        assertEquals("Failure - path calculated wrong", g.vertices[4].previous, g.vertices[1]);
+        assertEquals(2.0, g.vertices[4].minDistance, 0.0);
+
+        assertEquals("Failure - path calculated wrong", g.vertices[8].previous, g.vertices[5]);
+        assertEquals(3.0, g.vertices[8].minDistance, 0.0);
     }
 }
