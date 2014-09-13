@@ -82,6 +82,16 @@ public class UnitTester
 
         printRoute( g.vertices[8] );
     }
+    
+    @Test
+    public void depthFirstSearchTests()
+    {
+        resetGraph();
+        DepthFirstSearch.perform(g, g.vertices[0]);
+        
+        printRoute( g.vertices[8] );
+
+    }
 
     private List<Vertex> routeFrom(Vertex v)
     {
