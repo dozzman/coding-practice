@@ -54,9 +54,9 @@ public class Kruskal
             {
                 continue;
             }
-
-            Set<Vertex> unionSet = union( sourceSet, destSet );
-            sourceSet = unionSet;
+            
+            // union the two sets together
+            sourceSet.addAll( destSet );
             sets.remove( destSet );
            
             numOfSets = sets.size();
@@ -69,13 +69,5 @@ public class Kruskal
         Edge [] finalEdgesArray = finalEdges.toArray(new Edge[0]);
 
         return new Graph( finalEdgesArray );
-    }
-
-    private static Set<Vertex> union( Set<Vertex> set1, Set<Vertex> set2 )
-    {
-        Set<Vertex> newSet = new HashSet<>(set1);
-        newSet.addAll( set2 );
-
-        return newSet;
     }
 }
