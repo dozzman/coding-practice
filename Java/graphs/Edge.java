@@ -23,6 +23,13 @@ public class Edge
         weight = w;
     }
 
+    public Edge()
+    {
+        source = null;
+        dest = null;
+        weight = 0.0;
+    }
+
     // used to make all graph edges undirected when using Maps
     @Override
     public int hashCode()

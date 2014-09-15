@@ -58,4 +58,60 @@ public class Graph
              adjacentPointers.put( e.dest, adjacentPointers.get( e.dest ) + 1 );
          }
     }
+
+    public Graph( Edge [] es )
+    {
+        // extract all vertices from edges
+
+        Map<Vertex, Map<Vertex, Double>> adjacencyLists = new HashMap<>();
+
+        for ( Edge e : es )
+        {
+            if ( !adjacencyLists.containsKey( e.source ) )
+            {
+                adjacencyLists.put( e.source, new HashMap<Vertex, Double>());
+            }
+            if ( !adjacencyLists.containsKey( e.dest ) )
+            {
+                adjacencyLists.put( e.dest, new HashMap<Vertex, Double>());
+            }
+
+            Map<Vertex, Double> edgesOfSource = adjacencyLists.get( e.source );
+            Map<Vertex, Double> edgesOfDest = adjacencyLists.get( e.dest );
+
+            edgesOfSource.put( e.dest, e.weight );
+            edgesOfDest.put( e.source, e.weight );
+
+        }
+        
+        Set<Vertex> keySet = adjacencyLists.keySet();
+        Vertex [] finalVertices = new Vertex[ keySet.size() ];
+        Iterator<Vertex> iter = keySet.iterator();
+    
+        for ( int i = 0; iter.hasNext(); i++ )
+        {
+            Vertex v = iter.next();
+            finalVertices[i] = v;
+        }
+
+        this.vertices = finalVertices;
+        
+        iter = keySet.iterator();
+
+        for ( int i = 0; iter.hasNext(); i++ )
+        {
+            Vertex vSource = iter.next();
+            Map<Vertex, Double> edgesOfVSource = adjacencyLists.get( vSource );
+            Set<Vertex> vsAdjacentToVSource = edgesOfVSource.keySet();
+            Iterator<Vertex> iterVsAdjacentToVSource = vsAdjacentToVSource.iterator();
+
+            vSource.adjacent = new Edge[ vsAdjacentToVSource.size() ];
+
+            for ( int j = 0; iterVsAdjacentToVSource.hasNext(); j++ )
+            {
+                Vertex vDest = iterVsAdjacentToVSource.next();
+                vSource.adjacent[j] = new Edge(vSource, vDest, edgesOfVSource.get( vDest ).doubleValue() );
+            }
+        }
+    }
 }

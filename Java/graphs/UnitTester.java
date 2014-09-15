@@ -64,7 +64,8 @@ public class UnitTester
 
         printRoute( g.vertices[8] );
     }
-
+    
+    // Dijskstra's Algorithm tests
     @Test
     public void DijkstraTests()
     {
@@ -82,7 +83,8 @@ public class UnitTester
 
         printRoute( g.vertices[8] );
     }
-    
+   
+   // Depth First Search tests
     @Test
     public void depthFirstSearchTests()
     {
@@ -91,6 +93,16 @@ public class UnitTester
         
         printRoute( g.vertices[8] );
 
+        // how to blackbox test depth first search??
+
+    }
+
+    // Kruskals Tests
+    @Test
+    public void kruskalTests()
+    {
+        resetGraph();
+        Graph mst = Kruskal.perform( g );
     }
 
     private List<Vertex> routeFrom(Vertex v)
