@@ -73,21 +73,9 @@ public class Kruskal
 
     private static Set<Vertex> union( Set<Vertex> set1, Set<Vertex> set2 )
     {
-        Set<Vertex> newSet = new HashSet<>();
+        Set<Vertex> newSet = new HashSet<>(set1);
+        newSet.addAll( set2 );
 
-        Iterator<Vertex> set1Iter = set1.iterator();
-        Iterator<Vertex> set2Iter = set2.iterator();
-
-        while ( set1Iter.hasNext() )
-        {
-            newSet.add( set1Iter.next() );
-        }
-
-        while ( set2Iter.hasNext() )
-        {
-            newSet.add( set2Iter.next() );
-        }
-        
         return newSet;
     }
 }
