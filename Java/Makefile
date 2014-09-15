@@ -13,7 +13,7 @@ OPTIONS=-Xlint:unchecked
 all: $(CLASSES)
 
 clean:
-	-rm $(CLASSES) 
+	-rm data_structures/*.class sorting/*.class graphs/*.class
 
 runsort: all
 	$(JAVA) -cp $(CLASSPATH) sorting/SortTester
@@ -28,3 +28,4 @@ rungraphs: all
 	$(JAVAC) -cp $(CLASSPATH) $(OPTIONS) $<
 
 .PHONY: all
+
