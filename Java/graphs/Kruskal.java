@@ -18,8 +18,7 @@ public class Kruskal
             }
         });
 
-        int numOfSets = sets.size();
-        for ( int i = 0; i < numOfSets; i++ )
+        for ( int i = 0; i < g.vertices.length; i++ )
         {
             Set<Vertex> currentSet = new HashSet<Vertex>();
             currentSet.add( g.vertices[i] );
@@ -31,6 +30,7 @@ public class Kruskal
             edgeQueue.add( e );
         }
         
+        int numOfSets = sets.size();
         while ( edgeQueue.peek() != null && numOfSets > 1 )
         {
             Edge e = edgeQueue.remove();

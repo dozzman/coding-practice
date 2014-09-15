@@ -23,8 +23,46 @@ public class Graph
         return edges.keySet().toArray(new Edge [edges.size()]);
     }
 
-    public Graph(Vertex [] vs, Edge [] es)
+    public Vertex vertex(int vertNum)
     {
+        String vertString = Integer.toString(vertNum);
+        for( Vertex v : vertices )
+        {
+            if ( vertString.equals( v.name ) )
+            {
+                return v;
+            }
+        }
+        
+        return null;
+    }
+
+    public boolean containsEdge(Vertex v1, Vertex v2)
+    {
+        for ( Vertex v : vertices )
+        {
+            if ( v == v1 )
+            {
+                for ( Edge e : v.adjacent )
+                {
+                    if ( e.dest == v2 )
+                    {
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+
+        return false;
+    }
+
+    public Graph(Vertex [] orig_vs, Edge [] orig_es )
+    {
+        Vertex [] vs = new Vertex[ orig_vs.length ];
+        System.arraycopy( orig_vs, 0, vs, 0, orig_vs.length );
+        Edge [] es = new Edge[ orig_es.length ];
+        System.arraycopy( orig_es, 0, es, 0, orig_es.length );
         vertices = vs;
 
         // duplicate and reverse the edges approprately within each vertex
@@ -59,59 +97,51 @@ public class Graph
          }
     }
 
-    public Graph( Edge [] es )
+    public Graph( Edge [] orig_es )
     {
         // extract all vertices from edges
-
-        Map<Vertex, Map<Vertex, Double>> adjacencyLists = new HashMap<>();
+        Edge [] es = new Edge[ orig_es.length ];
+        System.arraycopy( orig_es, 0, es, 0, orig_es.length );
+        Set<Vertex> vs = new HashSet<>();
+        Map<Vertex, Set<Edge>> adjacencyList = new HashMap<>();
 
         for ( Edge e : es )
         {
-            if ( !adjacencyLists.containsKey( e.source ) )
+            if ( !vs.contains( e.source ) )
             {
-                adjacencyLists.put( e.source, new HashMap<Vertex, Double>());
-            }
-            if ( !adjacencyLists.containsKey( e.dest ) )
-            {
-                adjacencyLists.put( e.dest, new HashMap<Vertex, Double>());
+                vs.add( e.source );
             }
 
-            Map<Vertex, Double> edgesOfSource = adjacencyLists.get( e.source );
-            Map<Vertex, Double> edgesOfDest = adjacencyLists.get( e.dest );
+            if ( !vs.contains( e.dest ) )
+            {
+                vs.add ( e.dest );
+            }
 
-            edgesOfSource.put( e.dest, e.weight );
-            edgesOfDest.put( e.source, e.weight );
+            if ( !adjacencyList.containsKey( e.source ) )
+            {
+                adjacencyList.put( e.source, new HashSet<Edge>() );
+            }
+
+            if ( !adjacencyList.containsKey( e.dest ) )
+            {
+                adjacencyList.put( e.dest, new HashSet<Edge>() );
+            }
+
+            Set<Edge> sourceEdges = adjacencyList.get( e.source );
+            Set<Edge> destEdges = adjacencyList.get( e.dest );
+
+            sourceEdges.add( new Edge( e.source, e.dest, e.weight ) );
+            destEdges.add( new Edge( e.dest, e.source, e.weight ) );
 
         }
-        
-        Set<Vertex> keySet = adjacencyLists.keySet();
-        Vertex [] finalVertices = new Vertex[ keySet.size() ];
-        Iterator<Vertex> iter = keySet.iterator();
-    
-        for ( int i = 0; iter.hasNext(); i++ )
+
+        vertices = vs.toArray(new Vertex[0]);
+
+        for( Vertex v : vertices )
         {
-            Vertex v = iter.next();
-            finalVertices[i] = v;
-        }
-
-        this.vertices = finalVertices;
-        
-        iter = keySet.iterator();
-
-        for ( int i = 0; iter.hasNext(); i++ )
-        {
-            Vertex vSource = iter.next();
-            Map<Vertex, Double> edgesOfVSource = adjacencyLists.get( vSource );
-            Set<Vertex> vsAdjacentToVSource = edgesOfVSource.keySet();
-            Iterator<Vertex> iterVsAdjacentToVSource = vsAdjacentToVSource.iterator();
-
-            vSource.adjacent = new Edge[ vsAdjacentToVSource.size() ];
-
-            for ( int j = 0; iterVsAdjacentToVSource.hasNext(); j++ )
-            {
-                Vertex vDest = iterVsAdjacentToVSource.next();
-                vSource.adjacent[j] = new Edge(vSource, vDest, edgesOfVSource.get( vDest ).doubleValue() );
-            }
+            Set<Edge> edgesOfV = adjacencyList.get( v );
+            v.adjacent = edgesOfV.toArray( new Edge[0] );
         }
     }
+
 }

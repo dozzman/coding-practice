@@ -44,7 +44,30 @@ public class UnitTester
         es[15] = new Edge(vs[5], vs[8], 10.0);
         es[16] = new Edge(vs[7], vs[8], 16.0);
 
-        g = new Graph(vs, es);
+        g = new Graph( vs, es );
+        
+    }
+
+    public static boolean compareArray( Object [] array1, Object [] array2 )
+    {
+        for ( Object o1 : array1 )
+        {
+            boolean match = false;
+            for ( Object o2 : array2 )
+            {
+                if ( o1 == o2 )
+                {
+                    match = true;
+                    break;
+                }
+            }
+            if ( !match )
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // BreadthFirstSearch tests
@@ -52,17 +75,17 @@ public class UnitTester
     public void BreadthFirstSearchTests()
     {
         resetGraph();
-        BreadthFirstSearch.perform(g, g.vertices[0]);
-        assertEquals("Failure - path calculated wrong", g.vertices[7].previous, g.vertices[3]);
-        assertEquals(2.0, g.vertices[7].minDistance, 0.0);
+        BreadthFirstSearch.perform(g, g.vertex(0));
+        assertEquals("Failure - path calculated wrong", g.vertex(7).previous, g.vertex(3));
+        assertEquals(2.0, g.vertex(7).minDistance, 0.0);
 
-        assertEquals("Failure - path calculated wrong", g.vertices[4].previous, g.vertices[1]);
-        assertEquals(2.0, g.vertices[4].minDistance, 0.0);
+        assertEquals("Failure - path calculated wrong", g.vertex(4).previous, g.vertex(1));
+        assertEquals(2.0, g.vertex(4).minDistance, 0.0);
 
-        assertEquals("Failure - path calculated wrong", g.vertices[8].previous, g.vertices[5]);
-        assertEquals(3.0, g.vertices[8].minDistance, 0.0);
+        assertEquals("Failure - path calculated wrong", g.vertex(8).previous, g.vertex(5));
+        assertEquals(3.0, g.vertex(8).minDistance, 0.0);
 
-        printRoute( g.vertices[8] );
+        printRoute( g.vertex(8) );
     }
     
     // Dijskstra's Algorithm tests
@@ -70,18 +93,18 @@ public class UnitTester
     public void DijkstraTests()
     {
         resetGraph();
-        Dijkstra.perform(g, g.vertices[0]);
+        Dijkstra.perform(g, g.vertex(0));
         
-        assertEquals("Failure - path calculated wrong", g.vertices[8].previous, g.vertices[5]);
-        assertEquals(23.0, g.vertices[8].minDistance,0.0);
+        assertEquals("Failure - path calculated wrong", g.vertex(8).previous, g.vertex(5));
+        assertEquals(23.0, g.vertex(8).minDistance,0.0);
 
-        assertEquals("Failure - path calculated wrong", g.vertices[5].previous, g.vertices[4]);
-        assertEquals(13.0, g.vertices[5].minDistance,0.0);
+        assertEquals("Failure - path calculated wrong", g.vertex(5).previous, g.vertex(4));
+        assertEquals(13.0, g.vertex(5).minDistance,0.0);
         
-        assertEquals("Failure - path calculated wrong", g.vertices[4].previous, g.vertices[2]);
-        assertEquals(9.0, g.vertices[4].minDistance,0.0);
+        assertEquals("Failure - path calculated wrong", g.vertex(4).previous, g.vertex(2));
+        assertEquals(9.0, g.vertex(4).minDistance,0.0);
 
-        printRoute( g.vertices[8] );
+        printRoute( g.vertex(8) );
     }
    
    // Depth First Search tests
@@ -89,11 +112,11 @@ public class UnitTester
     public void depthFirstSearchTests()
     {
         resetGraph();
-        DepthFirstSearch.perform(g, g.vertices[0]);
+        DepthFirstSearch.perform(g, g.vertex(0));
         
-        printRoute( g.vertices[8] );
+        printRoute( g.vertex(8) );
 
-        // how to blackbox test depth first search??
+        // how to blackbox test depth first search
 
     }
 
@@ -103,6 +126,15 @@ public class UnitTester
     {
         resetGraph();
         Graph mst = Kruskal.perform( g );
+        
+        assertTrue("Failure - MST does not contain all vertices", compareArray( g.vertices, mst.vertices ) );
+
+        assertTrue("Failure - MST does not contain neccessary edge", mst.containsEdge( mst.vertex(1), mst.vertex(2) ) );
+
+        assertTrue("Failure - MST does not contain neccessary edge", mst.containsEdge( mst.vertex(4), mst.vertex(2) ) );
+
+        assertTrue("Failure - MST does not contain neccessary edge", mst.containsEdge( mst.vertex(5), mst.vertex(4) ) );
+        
     }
 
     private List<Vertex> routeFrom(Vertex v)
@@ -122,7 +154,7 @@ public class UnitTester
 
     private void printRoute(Vertex v)
     {
-        List<Vertex> route = routeFrom(g.vertices[8]);
+        List<Vertex> route = routeFrom(g.vertex(8));
         Iterator<Vertex> iter = route.iterator();
        
         System.out.println("Path:");
