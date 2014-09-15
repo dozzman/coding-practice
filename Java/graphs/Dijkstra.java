@@ -9,7 +9,13 @@ public class Dijkstra
     
     public static void perform(Graph g, Vertex s)
     {
-        Queue<Vertex> queue = new PriorityQueue<>(g.vertices.length, new VertexDistanceComparator());
+        Queue<Vertex> queue = new PriorityQueue<>(g.vertices.length, new Comparator<Vertex>()
+        {
+            public int compare(Vertex v1, Vertex v2)
+            {
+                return Double.compare(v1.minDistance, v2.minDistance);
+            }
+        });
 
         for ( Vertex v : g.vertices )
         {
