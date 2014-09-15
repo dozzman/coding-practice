@@ -76,5 +76,29 @@ public class UnitTester
         assertNull("Failure - should be null", queue.dequeue());
         assertEquals("Failure - queue should be empty", 0, queue.length());
     }
+
+    @Test
+    public void BSTreeTests()
+    {
+        BSTree<Integer> tree = new BSTree<>();
+
+        assertEquals( "Failure - count should be 0", tree.count(), 0 );
+
+        Integer [] intArray = new Integer[100];
+
+        // fill array and tree with random numbers
+        for ( int i = 0; i < 100; i++ )
+        {
+            intArray[i] = new Integer( (int)( Math.random()*1000.0 ) );
+            tree.insert( intArray[i] );
+        }
+
+        for ( Integer i : intArray )
+        {
+            assertTrue("Failure - integer not found in tree", tree.search( i ) );
+        }
+    }
+
+
 }
 
