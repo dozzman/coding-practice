@@ -136,6 +136,18 @@ public class UnitTester
         assertTrue("Failure - MST does not contain neccessary edge", mst.containsEdge( mst.vertex(5), mst.vertex(4) ) );
         
     }
+    
+    // Prims Tests
+    @Test
+    public void primsTests()
+    {
+        resetGraph();
+
+        Prims.perform( g, g.vertex(0) );
+        assertEquals( 0.0 , g.vertex(0).minDistance, 0 );
+        assertEquals("Failure - wrong parent", g.vertex(3).previous, g.vertex(0) );
+
+    }
 
     private List<Vertex> routeFrom(Vertex v)
     {
