@@ -3,9 +3,9 @@ package data_structures;
 import java.lang.*;
 import java.util.*;
 
-public class BSTree<T extends Comparable>
+public class BSTree<T extends Comparable<? super T>>
 {
-    private class Node<T>
+    private class Node
     {
         public Node parent;
         public Node left;
@@ -24,7 +24,7 @@ public class BSTree<T extends Comparable>
         }
     };
 
-    private Node<T> root;
+    private Node root;
     private int count;
 
     public int count() { return count; };
@@ -70,28 +70,138 @@ public class BSTree<T extends Comparable>
         count++;
     }
     
-    private boolean searchAt(T data, Node node)
+    public boolean search(T data)
     {
-        if ( node == null )
+       return searchNodeAt( data, root ) == null ? false : true ;
+    }
+    
+    private Node searchNodeAt(T data, Node node)
+    {
+        if( node == null )
         {
-            return false;
+            return null;
         }
         
-        if ( data.compareTo( node.data ) == 0)
+        System.out.println("Comparing " + data + " to " + node.data );
+        if( data.compareTo( node.data ) == 0 )
         {
-            return true;
+            return node;
         }
 
         if ( data.compareTo( node.data ) < 0 )
         {
-            return searchAt( data, node.left );
+            return searchNodeAt( data, node.left );
         }
-
-        return searchAt( data, node.right );
+        else
+        {
+            return searchNodeAt( data, node.right );
+        }
+    }
+    
+    private Node minimumNodeAt( Node node )
+    {
+        if ( node.left == null )
+        {
+            return node;
+        }
+        else
+        {
+            return minimumNodeAt( node.left );
+        }
     }
 
-    public boolean search(T data)
+    private Node successorNode( Node node )
     {
-       return searchAt( data, root );
+        if ( node.right != null )
+        {
+            return minimumNodeAt( node.right );
+        }
+
+        Node nodeParent = node.parent;
+        Node temp = node;
+
+        while ( nodeParent != null && node == nodeParent.right )
+        {
+            node = nodeParent;
+            nodeParent = nodeParent.parent;
+        }
+
+        if( nodeParent.data.compareTo( temp.data ) <= 0 )
+        {
+            return null;
+        }
+
+        return nodeParent;
+    }
+
+    public T successor( T data )
+    {
+        
+        Node node = searchNodeAt( data, root );
+        Node successorNode = successorNode( node );
+        if ( successorNode == null )
+            return null;
+
+       return successorNode.data;
+    }
+
+    private void transplant( Node n1, Node n2 )
+    {
+        if ( n1.parent == null )
+        {
+            root = n2;
+            return;
+        }
+        else if ( n1.parent.left == n1 )
+        {
+            n1.parent.left = n2;
+        }
+        else
+        {
+            n1.parent.right = n2;
+        }
+        
+        if ( n2 != null )
+        {
+            n2.parent = n1.parent;
+        }
+    }
+
+    public boolean delete( T data )
+    {
+        System.out.println("Attempting to delete " + data );
+        Node node = searchNodeAt( data, root );
+        System.out.println("Search finished!");
+        if ( node == null )
+        {
+            // data not found in tree
+            return false;
+        }
+        else if ( node.left == null )
+        {
+            System.out.println("no left child case");
+            transplant( node, node.right );
+        }
+        else if ( node.right == null )
+        {
+            System.out.println("no right child case");
+            transplant( node, node.left );
+        }
+        else
+        {
+            System.out.println("Both children case");
+            Node successorNode = minimumNodeAt( node.right );
+            if ( successorNode.parent != node )
+            {
+                transplant( successorNode, successorNode.right );
+                successorNode.right = node.right;
+                successorNode.right.parent = successorNode;
+            }
+            transplant( node, successorNode );
+            successorNode.left = node.left;
+            successorNode.left.parent = successorNode;
+        }
+
+        return true;
     }
 }

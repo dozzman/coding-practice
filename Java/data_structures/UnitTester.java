@@ -97,6 +97,17 @@ public class UnitTester
         {
             assertTrue("Failure - integer not found in tree", tree.search( i ) );
         }
+
+        for ( Integer i : intArray )
+        {
+            assertTrue("Failure - integer not found in tree", tree.search( i ) );
+        }
+
+        for ( Integer i : intArray )
+        {
+            assertTrue("Failure - failed to find integer in tree", tree.delete( i ) );
+            assertFalse("Failure - integer wasn't deleted from tree", tree.search( i ) );
+        }
     }
 
 
