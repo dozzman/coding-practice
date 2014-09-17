@@ -16,7 +16,7 @@ clean:
 	-rm data_structures/*.class sorting/*.class graphs/*.class
 
 runsort: all
-	$(JAVA) -cp $(CLASSPATH) sorting/SortTester
+	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore sorting.UnitTester
 
 runstruct: all
 	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore data_structures.UnitTester
