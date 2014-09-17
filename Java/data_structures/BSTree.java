@@ -82,7 +82,6 @@ public class BSTree<T extends Comparable<? super T>>
             return null;
         }
         
-        System.out.println("Comparing " + data + " to " + node.data );
         if( data.compareTo( node.data ) == 0 )
         {
             return node;
@@ -126,7 +125,7 @@ public class BSTree<T extends Comparable<? super T>>
             nodeParent = nodeParent.parent;
         }
 
-        if( nodeParent.data.compareTo( temp.data ) <= 0 )
+        if( nodeParent == null || nodeParent.data.compareTo( temp.data ) <= 0 )
         {
             return null;
         }
@@ -150,7 +149,6 @@ public class BSTree<T extends Comparable<? super T>>
         if ( n1.parent == null )
         {
             root = n2;
-            return;
         }
         else if ( n1.parent.left == n1 )
         {
@@ -160,7 +158,6 @@ public class BSTree<T extends Comparable<? super T>>
         {
             n1.parent.right = n2;
         }
-        
         if ( n2 != null )
         {
             n2.parent = n1.parent;
@@ -169,9 +166,7 @@ public class BSTree<T extends Comparable<? super T>>
 
     public boolean delete( T data )
     {
-        System.out.println("Attempting to delete " + data );
         Node node = searchNodeAt( data, root );
-        System.out.println("Search finished!");
         if ( node == null )
         {
             // data not found in tree
@@ -179,17 +174,14 @@ public class BSTree<T extends Comparable<? super T>>
         }
         else if ( node.left == null )
         {
-            System.out.println("no left child case");
             transplant( node, node.right );
         }
         else if ( node.right == null )
         {
-            System.out.println("no right child case");
             transplant( node, node.left );
         }
         else
         {
-            System.out.println("Both children case");
             Node successorNode = minimumNodeAt( node.right );
             if ( successorNode.parent != node )
             {

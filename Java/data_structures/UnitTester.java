@@ -105,8 +105,17 @@ public class UnitTester
 
         for ( Integer i : intArray )
         {
+            Integer successor = tree.successor( i );
             assertTrue("Failure - failed to find integer in tree", tree.delete( i ) );
-            assertFalse("Failure - integer wasn't deleted from tree", tree.search( i ) );
+            
+            if ( successor == null )
+            {
+                assertFalse("Failure - integer wasn't deleted from tree", tree.search( i ) );
+            }
+            else if ( !successor.equals( i ) )
+            {
+                assertFalse("Failure - integer wasn't deleted from tree", tree.search( i ) );
+            }
         }
     }
 
