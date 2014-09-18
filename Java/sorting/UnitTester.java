@@ -10,57 +10,44 @@ public class UnitTester
     private static final int DEFAULT_START = 0;
     private static final int DEFAULT_END = 1000;
     private static final int DEFAULT_SIZE = 1000;
-
+    
     // bubbleSort tester
     @Test
     public void bubbleSortTest()
     {
-        Sorter bubbleSorter = new BubbleSort();
-        Integer [] array = randomIntArray(DEFAULT_START, DEFAULT_END, DEFAULT_SIZE); 
-
-        bubbleSorter.sort( array );
-
-        assertTrue( "Failure - bubble test failed", testOrder( array ) );
-        System.out.println("Bubble sort test success!");
+        testSorter( new BubbleSort<Integer>() );
     }
 
     // insertionSort tester
     @Test
     public void insertionSortTest()
     {
-        Sorter insertionSorter = new InsertionSort();
-        Integer [] array = randomIntArray(DEFAULT_START, DEFAULT_END, DEFAULT_SIZE); 
-
-        insertionSorter.sort( array );
-
-        assertTrue( "Failure - insertion sort test failed", testOrder( array ) );
-        System.out.println("Insertion sort test success!");
+        testSorter( new InsertionSort<Integer>() );
     }
 
     // mergeSort tester
     @Test
     public void mergeSortTest()
     {
-        Sorter mergeSorter = new MergeSort();
-        Integer [] array = randomIntArray(DEFAULT_START, DEFAULT_END, DEFAULT_SIZE); 
-
-        mergeSorter.sort( array );
-
-        assertTrue( "Failure - merge sort test failed", testOrder( array ) );
-        System.out.println("Merge sort test success!");
+        testSorter( new MergeSort<Integer>() );
     }
 
     // quickSort tester
     @Test
     public void quickSortTest()
     {
-        Sorter quickSorter = new QuickSort();
-        Integer [] array = randomIntArray(DEFAULT_START, DEFAULT_END, DEFAULT_SIZE); 
+        testSorter( new QuickSort<Integer>() );
+    }
 
-        quickSorter.sort( array );
+    public void testSorter( Sorter<Integer> sorter )
+    {
+        System.out.println( "Now testing " + sorter.sortName() + "..." );
+        Integer [] array = randomIntArray( DEFAULT_START, DEFAULT_END, DEFAULT_SIZE );
 
-        assertTrue( "Failure - quick test failed", testOrder( array ) );
-        System.out.println("Quick sort test success!");
+        sorter.sort( array );
+
+        assertTrue( "Failure - " + sorter.sortName() + " test failed!", testOrder( array ) );
+        System.out.println( sorter.sortName() + "test succeeded!" );
     }
 
     public Integer[] randomIntArray(int min, int max, int length)

@@ -3,12 +3,14 @@ package sorting;
 import java.lang.*;
 import java.util.*;
 
-public abstract class Sorter
+public abstract class Sorter<T extends Comparable<? extends T>>
 {
-    public abstract <T extends Comparable<T>> void sort(T array []);
+    public abstract void sort(T array []);
+
+    public abstract String sortName();
 
     // generic swapping function
-    protected <T extends Comparable<T>> void swap(T array [], int elem1, int elem2)
+    protected void swap(T array [], int elem1, int elem2)
     {
         T temp = array[elem1];
         array[elem1] = array[elem2];

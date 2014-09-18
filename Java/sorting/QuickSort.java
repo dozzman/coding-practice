@@ -3,14 +3,16 @@ package sorting;
 import java.lang.*;
 import java.util.*;
 
-public class QuickSort extends Sorter
+public class QuickSort<T extends Comparable<T>> extends Sorter<T>
 {
-    public <T extends Comparable<T>> void sort(T array [])
+    public String sortName() { return "Quick Sort"; }
+
+    public void sort(T array [])
     {
         quickSort(array,0,array.length - 1);
     }
 
-    private <T extends Comparable<T>> void quickSort(T array[], int left, int right)
+    private void quickSort(T array[], int left, int right)
     {
         if (left >= right)
             return;
@@ -20,7 +22,7 @@ public class QuickSort extends Sorter
         quickSort(array, mid + 1, right);
     }
 
-    private <T extends Comparable<T>> int partition(T array[], int left, int right)
+    private int partition(T array[], int left, int right)
     {
         int pivot = right;
         int small_pointer = left;

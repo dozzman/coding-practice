@@ -3,9 +3,11 @@ package sorting;
 import java.lang.*;
 import java.util.*;
 
-public class BubbleSort extends Sorter
+public class BubbleSort<T extends Comparable<T>> extends Sorter<T>
 {
-    public <T extends Comparable<T>> void sort(T array [])
+    public String sortName() { return "Bubble Sort"; }
+
+    public void sort(T array [])
     {
         boolean swapped = true;
         while (swapped == true)

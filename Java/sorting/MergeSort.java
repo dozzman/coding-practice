@@ -4,14 +4,16 @@ package sorting;
 import java.lang.*;
 import java.util.*;
 
-public class MergeSort extends Sorter
+public class MergeSort<T extends Comparable<T>> extends Sorter<T>
 {
-    public <T extends Comparable<T>> void sort(T array [])
+    public String sortName() { return "Merge Sort"; }
+
+    public void sort(T array [])
     {
         mergeSort(array,0,array.length-1);
     }
     
-    private <T extends Comparable<T>> void mergeSort(T array [], int left, int right)
+    private void mergeSort(T array [], int left, int right)
     {
         
         if(left >= right)
@@ -20,23 +22,14 @@ public class MergeSort extends Sorter
         }
 
         int mid = (int)Math.ceil((double)(left + right) / 2); // MUST CONVERT TO DOUBLE OR INTEGER DIVISION IS ALREADY A FLOOR OPERATION
-        System.out.println(left + ", " + mid + ", " + right); 
         mergeSort(array, left, mid - 1);
         mergeSort(array, mid, right);
         merge(array, left, mid, right);
     }
 
-    private <T extends Comparable<T>> void merge(T array [], int left, int middle, int right)
+    private void merge(T array [], int left, int middle, int right)
     {
         T copy[] = Arrays.copyOfRange(array,left,right+1); // COPY IS EXCLUSIVE OF RIGHTMOST ARRAY ELEMENT
-        System.out.print("Merging array: ");
-
-        for(T t : copy)
-        {
-            System.out.print(t + ",");
-        }
-
-        System.out.println();
 
         // perform merge
         int l_len = middle - left;
