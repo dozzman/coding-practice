@@ -39,6 +39,13 @@ public class UnitTester
         testSorter( new QuickSort<Integer>() );
     }
 
+    // max-heap sort tester
+    @Test
+    public void maxHeapTest()
+    {
+        testSorter( new MaxHeap<Integer>() );
+    }
+
     public void testSorter( Sorter<Integer> sorter )
     {
         System.out.println( "Now testing " + sorter.sortName() + "..." );
@@ -47,7 +54,7 @@ public class UnitTester
         sorter.sort( array );
 
         assertTrue( "Failure - " + sorter.sortName() + " test failed!", testOrder( array ) );
-        System.out.println( sorter.sortName() + "test succeeded!" );
+        System.out.println( sorter.sortName() + " test succeeded!" );
     }
 
     public Integer[] randomIntArray(int min, int max, int length)
