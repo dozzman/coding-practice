@@ -26,7 +26,7 @@ public class QuickSort<T extends Comparable<T>> extends Sorter<T>
     {
         int pivot = right;
         int small_pointer = left;
-        for(int i = left; i <= right; i++)
+        for(int i = left; i < right; i++)
         {
             if (array[i].compareTo(array[pivot]) < 0)
             {

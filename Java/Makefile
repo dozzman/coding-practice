@@ -4,6 +4,7 @@ JAVA=java
 SOURCES+=$(wildcard data_structures/*.java)
 SOURCES+=$(wildcard sorting/*.java)
 SOURCES+=$(wildcard graphs/*.java)
+SOURCES+=$(wildcard questions/*/*/*.java)
 CLASSES=$(SOURCES:.java=.class)
 JUNITPATH=junit-4.11.jar
 HAMCRESTPATH=hamcrest-core-1.3.jar
