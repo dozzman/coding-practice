@@ -19,7 +19,7 @@ runsort: SortTest
 	./SortTest
 
 clean:
-	-find . -iname "*.[oa]" -exec $(RM) {} +
+	-$(RM) sorting/*.o
 	-$(RM) SortTest
 
 
