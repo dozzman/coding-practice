@@ -1,33 +1,49 @@
 JAVAC=javac
 JAVA=java
 
-SOURCES+=$(wildcard data_structures/*.java)
-SOURCES+=$(wildcard sorting/*.java)
-SOURCES+=$(wildcard graphs/*.java)
-SOURCES+=$(wildcard questions/*/*/*.java)
-SOURCES+=$(wildcard euler/*/*.java)
-CLASSES=$(SOURCES:.java=.class)
+DATA_SOURCES=$(wildcard data_structures/*.java)
+SORTING_SOURCES=$(wildcard sorting/*.java)
+GRAPH_SOURCES=$(wildcard graphs/*.java)
+QUESTION_SOURCES=$(wildcard questions/*/*/*.java)
+EULER_SOURCES=$(wildcard euler/*/*.java)
+
+DATA_CLASSES=$(DATA_SOURCES:.java=.class)
+SORTING_CLASSES=$(SORTING_SOURCES:.java=.class)
+GRAPH_CLASSES=$(GRAPH_SOURCES:.java=.class)
+QUESTION_CLASSES=$(QUESTION_SOURCES:.java=.class)
+EULER_CLASSES=$(EULER_SOURCES:.java=.class)
+
 JUNITPATH=junit-4.11.jar
 HAMCRESTPATH=hamcrest-core-1.3.jar
 CLASSPATH=.:$(JUNITPATH):$(HAMCRESTPATH)
-OPTIONS=-Xlint:unchecked
+JAVACOPTIONS=-Xlint:unchecked
 
-all: $(CLASSES)
+all: sorting data_structures graphs questions euler
 
-clean:
-	-rm data_structures/*.class sorting/*.class graphs/*.class
+sorting: $(SORTING_CLASSES)
 
-runsort: all
+data_structures: $(DATA_CLASSES)
+
+questions: $(QUESTION_CLASSES)
+
+graphs: $(GRAPHS_CLASSES)
+
+euler: $(EULER_CLASSES)
+
+runsort: sorting
 	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore sorting.UnitTester
 
-runstruct: all
+runstruct: data_structures
 	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore data_structures.UnitTester
 
-rungraphs: all
+rungraphs: graphs
 	$(JAVA) -cp $(CLASSPATH) org.junit.runner.JUnitCore graphs.UnitTester
 
-%.class: %.java
-	$(JAVAC) -cp $(CLASSPATH) $(OPTIONS) $<
+clean:
+	-$(RM) data_structures/*.class sorting/*.class graphs/*.class questions/*/*/*.class euler/*/*.class
 
-.PHONY: all
+%.class: %.java
+	$(JAVAC) -cp $(CLASSPATH) $(JAVACOPTIONS) $<
+
+.PHONY: all sorting data_structures questions euler runsort runstruct rungraphs clean
 

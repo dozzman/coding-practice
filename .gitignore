@@ -6,3 +6,6 @@
 *.swp
 *.jar
 Ocaml/SortTest
+C++/gtest-1.7.0
+*.zip
+*.a

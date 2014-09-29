@@ -24,6 +24,6 @@ SortTest: BubbleSort.cmx BSTree.cmx SortTest.cmx
 %.cmo: %.ml
 	$(OCAMLC) -o $@ -c $(CMOOPTIONS) $<
 clean:
-	-rm *.cmo *.cmi *.cmx *.o $(OUTPUTS)
+	-$(RM) *.cmo *.cmi *.cmx *.o $(OUTPUTS)
 
-.PHONY: all clean
+.PHONY: all clean 
