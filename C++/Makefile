@@ -1,16 +1,20 @@
 SORTING_SOURCES=$(wildcard sorting/*.cc)
 SORTING_OBJECTS=$(SORTING_SOURCES:.cc=.o)
 SORTING_DEPS=$(SORTING_OBJECTS:.o=.d)
+
 GTEST_DIR=gtest-1.7.0
 
 CXXFLAGS+=-Wall -std=c++11 -isystem $(GTEST_DIR)/include
 
-all: SortTest
+all: SortTest euler
 
 -include $(SORTING_DEPS)
 
 SortTest: libgtest.a $(SORTING_OBJECTS)
 	$(CXX) -o SortTest $(LDFLAGS) $+
+
+euler: 
+	$(MAKE) -C euler/problem9
 
 libgtest.a: gtest-all.o
 	ar -r libgtest.a gtest-all.o
@@ -30,4 +34,4 @@ clean:
 	-$(RM) SortTest
 
 
-.PHONY: all sorting runsort clean
+.PHONY: all sorting runsort clean euler
