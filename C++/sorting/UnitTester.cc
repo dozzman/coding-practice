@@ -4,13 +4,18 @@
 
 #include <gtest/gtest.h>
 #include <iostream>
+#include <ctime>
 #include "BubbleSorter.h"
+#include "MergeSorter.h"
 
 namespace
 {
     // The fixture for testing class Foo.
     class SortTest : public ::testing::Test
     {
+        private:
+        static const int MAX_VALUE = 1000;
+        static const int VECTOR_SIZE = 1000;
         protected:
             // You can remove any or all of the following functions if its body
             // is empty.
@@ -18,9 +23,10 @@ namespace
             SortTest()
             {
                 // constructor fills up the test vector with random integer values
-                for ( int i = 0; i < 1000; i++ )
+                std::srand(time(nullptr));
+                for ( int i = 0; i < VECTOR_SIZE; i++ )
                 {
-                    int newValue = std::rand() % 1000;
+                    int newValue = std::rand() % MAX_VALUE;
                     test_data.push_back( newValue );
                 }
             }
@@ -29,26 +35,45 @@ namespace
 
             bool testSort()
             {
-            std::vector<int>::iterator iter = test_data.begin();
-            std::advance( iter, 1 );
-            for( ; iter != test_data.end(); iter++ )
-            {
-                if ( *iter < *std::prev(iter) )
+                std::vector<int>::iterator iter = test_data.begin();
+                std::advance( iter, 1 );
+                for( ; iter != test_data.end(); iter++ )
                 {
-                    return false;
+                    if ( *iter < *std::prev(iter) )
+                    {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+
+            void printData()
+            {
+                std::cout << "Test Data:\n";
+                for ( auto elem : test_data )
+                {
+                    std::cout << elem << std::endl;
                 }
             }
-            
-            return true;
+
+            void testSorter( Sorter<int> &sorter )
+            {
+                sorter.sort( test_data );
+                ASSERT_EQ( true, testSort() ) << "Elements not sorted!\n";
             }
     };
-
-    // Tests that the Foo::Bar() method does Abc.
+    
     TEST_F(SortTest, BubbleSort)
     {
-        BubbleSorter<int> bubbleSorter;
-        bubbleSorter.sort( test_data );
-        ASSERT_EQ( 0, testSort() ) << "Elements not sorted!\n";
+        BubbleSorter<int> sorter;
+        testSorter( sorter );
+    }
+
+    TEST_F(SortTest, MergeSort)
+    {
+        MergeSorter<int> sorter;
+        testSorter( sorter );
     }
 }
 
