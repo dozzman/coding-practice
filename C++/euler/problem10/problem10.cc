@@ -3,20 +3,26 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 std::vector<long> primes;
 
 auto isPrime( long p ) -> bool
 {
+    long limit = sqrt(p);
     for ( auto elem : primes )
     {
+        if ( elem > limit )
+        {
+            break;
+        }
+
         if ( p % elem == 0 )
         {
             return false;
         }
     }
 
-    // std::cout << p << " is prime" << std::endl;
     primes.push_back( p );
 
     return true;
