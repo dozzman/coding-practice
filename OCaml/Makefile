@@ -13,8 +13,8 @@ SORT_ITFS=$(wildcard sorting/*.mli)
 SORT_ITF_OBJS=$(SORT_ITFS:.mli=.cmi)
 SORT_OBJS=$(SORT_SRCS:.ml=.cmx)
 
-EULER_SRCS=$(wildcard euler/*.ml)
-EULER_ITFS=$(wildcard euler/*.mli)
+EULER_SRCS=$(wildcard euler/*/*.ml)
+EULER_ITFS=$(wildcard euler/*/*.mli)
 EULER_ITF_OBJS=$(EULER_ITFS:.mli=.cmi)
 EULER_OBJS=$(EULER_SRCS:.ml=.cmx)
 
