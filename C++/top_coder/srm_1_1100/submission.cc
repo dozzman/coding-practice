@@ -1,4 +1,3 @@
-#include <list>
 #include <functional>
 #include <vector>
 #include <map>
@@ -87,54 +86,81 @@ class Segment
         return p0.dist( p1 );
     }
 
-    void sort()
-    {
-        if ( p0.y == p1.y )
-        {
-            if ( p1.x < p0.x )
-            {
-                Point temp = p0;
-                p0 = p1;
-                p1 = temp;
-            }
-        }
-        else
-        {
-            if ( p1.y < p0.y )
-            {
-                Point temp = p0;
-                p0 = p1;
-                p1 = temp;
-            }
-        }
-    }
-
-    bool operator<( const Segment& seg ) const
-    {
-        assert( "Comparing Segments!" );
-        return false;
-    }
-
     double dot( const Segment& s ) const
     {
         double self_dx = p1.x - p0.x;
         double self_dy = p1.y - p0.y;
         double s_dx = s.p1.x - s.p0.x;
         double s_dy = s.p1.y - s.p0.y;
-
+        
+        // dot as if the segments were vectors with origin p0 and s.p0
         return (self_dx*s_dx) + (self_dy*s_dy);
     }
     
     bool overlaps( const Segment& seg ) const
     {
+        if ( *this == seg )
+        {
+            return false;
+        }
+
+        Segment normal( Point(0,0), Point( p1.y - p0.y, p0.x - p1.x ) );
+        double d = dot( normal );
+        Segment segP0( Point(0,0), seg.p0 );
+        Segment segP1( Point(0,0), seg.p1 );
+        if ( normal.dot( segP0 ) != d )
+        {
+            return false;
+        }
+        if ( normal.dot( segP1 ) != d )
+        {
+            return false;
+        }
+
+        // segments lie within same plane
+        // now test if a point lies between the other line segment
+        Segment seg1( seg.p0, p0 );
+        Segment seg2( seg.p0, p1 );
+        Segment seg3( seg.p1, p0 );
+        Segment seg4( seg.p1, p1 );
+
+        if ( seg1.dot( seg2 ) < 0 )
+        {
+            return true;
+        }
+        if ( seg3.dot( seg4 ) < 0 )
+        {
+            return true;
+        }
+        if ( seg1.dot( seg3 ) < 0 )
+        {
+            return true;
+        }
+        if (seg2.dot( seg4 ) < 0 )
+        {
+            return true;
+        }
+
+        return false;
+
         Segment s1( p0, seg.p0 );
         Segment s2( p0, seg.p1 );
+    }
 
-        double s1_length = s1.length();
-        double s2_length = s2.length();
-        if ( abs( this->dot ( s1 ) ) == length()*s1_length )
+    bool intersects( const Segment& seg ) const
+    {
+        Segment normal( Point(0,0), Point( p1.y - p0.y, p0.x - p1.x ) );
+        Segment seg_normal( Point(0,0), Point( seg.p1.y - seg.p0.y, seg.p0.x - seg.p1.x ) );
+        Segment s1( p0, seg.p0 );
+        Segment s2( p0, seg.p1 );
+        Segment s3( seg.p0, p0 );
+        Segment s4( seg.p0, p1 );
+        
+        std::cout << "this.s1 * this.s2 = " << normal.dot( s1 ) * normal.dot( s2 ) << std::endl;
+        if ( normal.dot( s1 ) * normal.dot( s2 ) < 0 )
         {
-            if ( abs( this->dot ( s2 ) ) == length()*s2_length )
+            std::cout << "this.s3 * this.s4 = " << seg_normal.dot( s3 ) * seg_normal.dot( s4 ) << std::endl;
+            if ( seg_normal.dot( s3 ) * seg_normal.dot( s4 ) < 0 )
             {
                 return true;
             }
@@ -150,8 +176,9 @@ class Graph
         class Vertex;
         class Edge;
         typedef std::vector<Vertex*> VertexVector;
+        typedef std::vector<Edge*> EdgeVector;
 
-        // list of active graph vertices
+        // vector of active graph vertices
         VertexVector vertices;
 
         //vertex type
@@ -162,13 +189,27 @@ class Graph
 
             public:
                 T getData() const { return data; }
+
                 void setData( const T& data )
                 {
                     this->data = data;   
                 }
 
-                std::list<Edge*> edges;
-                Vertex( T &data ) : data( data ) {}
+                Edge* getEdgeWithDest( int dest ) const
+                {
+                    for ( auto e : edges )
+                    {
+                        if ( e->getDest() == dest )
+                        {
+                            return e;
+                        }
+                    }
+
+                   return nullptr;
+                }
+
+                std::vector<Edge*> edges;
+                Vertex( const T &data ) : data( data ) {}
         };
 
         //edge type
@@ -182,11 +223,14 @@ class Graph
                 int getSrc() const { return src; }
                 int getDest() const { return dest; }
                 int getWeight() const { return weight; }
+                void setSrc( int new_src ) { src = new_src; }
+                void setDest( int new_dest ) { dest = new_dest; }
+
                 Edge( int _src, int _dest, double _weight ) : src( _src ), dest( _dest ), weight( _weight ) {}
         };
 
         // insert a new vertex
-        int addVertex( T &data )
+        int addVertex( const T &data )
         {
             vertices.push_back( new Vertex( data ) );
             return (vertices.size() - 1);
@@ -195,6 +239,7 @@ class Graph
         // returns a vector of unique edges in the graph (edges going only one way)
         std::vector<Edge*> getEdges()
         {
+            // predicate returns true iff two edges have the same endpoints
             auto predFunction = [] ( Edge const * const e1, Edge const * const e2 )
             {
                 if ( e1->getSrc() == e2->getSrc() )
@@ -211,13 +256,14 @@ class Graph
                         return true;
                     }
                 }
-                std::cout << "different" << std::endl;
                 return false;
             };
-
+            
+            // hash function ensures edges going in different directions but at the same nodes
+            // hash to the same hash value
             auto hashFunction = [] ( Edge const * const e )
             {
-                return (size_t)0;
+                return (size_t)(e->getSrc() + e->getDest());
             };
 
             std::unordered_set<Edge*, decltype(hashFunction), decltype( predFunction )> result_set(0, hashFunction, predFunction);
@@ -231,6 +277,7 @@ class Graph
                 }
             }
 
+            // return edges as a vector
             for( auto e : result_set )
             { 
                 result_vector.push_back( e );
@@ -242,7 +289,7 @@ class Graph
         Graph() {}
 
         // add a new directed edge to the graph
-        virtual void addEdge( T& src, T& dest, double weight = 1.0 )
+        virtual void addEdge( const T& src, const T& dest, double weight = 1.0 )
         {
             int srcIndex = -1, destIndex = -1;
 
@@ -259,6 +306,15 @@ class Graph
                 }
             }
             
+            // check if edge already exists
+            for ( auto e : vertices[srcIndex]->edges )
+            {
+                if ( e->getDest() == destIndex )
+                {
+                    return;
+                }
+            }
+                
             // add them if they do not exist
             if ( srcIndex == -1 )
             {
@@ -270,21 +326,31 @@ class Graph
                 destIndex = addVertex( dest );
             }
 
-            // check if edge already exists
-            for ( auto e : vertices[srcIndex]->edges )
-            {
-                if ( e->getDest() == destIndex )
-                {
-                    return;
-                }
-            }
-                
             Edge *e = new Edge( srcIndex, destIndex, weight );
             vertices[srcIndex]->edges.push_back( e );
         }
 
+        void removeEdge( const T& src, const T& dest )
+        {
+            for ( int i = 0; i < vertices.size(); i++ )
+            {
+                if ( vertices[i]->getData() == src )
+                {
+                    for( typename EdgeVector::iterator iter = vertices[i]->edges.begin(); iter != vertices[i]->edges.end(); iter++ )
+                    {
+                        if ( vertices[(*iter)->getDest()]->getData() == dest )
+                        {
+                            vertices[i]->edges.erase( iter );
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+
         // add undirected edge (two directed edges) to graph
-        virtual void addEdges( T &src, T& dest, double weight = 1.0 )
+        virtual void addEdges( const T &src, const T& dest, double weight = 1.0 )
         {
             addEdge( src, dest, weight );
             addEdge( dest, src, weight );
@@ -313,14 +379,14 @@ class SegmentGraph : protected Graph<Point>
         Graph<Point>::addEdges( seg.p0, seg.p1 );
     }
 
-    virtual void addEdge( Point &p0, Point &p1, double weight ) override
+    virtual void addEdge( const Point &p0, const Point &p1, double weight ) override
     {
         int srcIndex = -1, destIndex = -1;
         Segment seg( p0, p1 );
         // check for overlaps
         std::vector<Edge*> edges( Graph<Point>::getEdges() );
-        
-        std::cout << "Edges returned... ";
+        printf("Adding edge %.0f %.0f %.0f %.0f\n", p0.x, p0.y, p1.x, p1.y );
+        std::cout << "Edges before... ";
         for ( auto e : edges )
         {
             printf(" (%.0f %.0f %.0f %.0f) ", vertices[e->getSrc()]->getData().x, vertices[e->getSrc()]->getData().y, vertices[e->getDest()]->getData().x, vertices[e->getDest()]->getData().y );
@@ -374,7 +440,6 @@ class SegmentGraph : protected Graph<Point>
                     {
                         vertices[e->getDest()]->setData( p1 );
                     }
-                    
                     // none of the above => edge lies within current edge
                 }
                 return;
@@ -426,15 +491,143 @@ class SegmentGraph : protected Graph<Point>
     // joins up any overlapping segments
     void reconstruct()
     {
-/*        auto edges( Graph<Point>::getEdges() );
+        std::cout << "in reconstruct...\n\n";
+        auto edges( Graph<Point>::getEdges() );
+        bool restart = true;
 
-        for ( auto e1 : edges )
+        while ( restart )
         {
-            for ( auto e2 : edges )
+            std::cout << "loop de loop\n";
+            restart = false;
+            for ( auto e1 : edges )
             {
-                
+                for ( auto e2 : edges )
+                {
+                    if ( e1 == e2 )
+                    {
+                        continue;
+                    }
+
+                    Segment s1( vertices[e1->getSrc()]->getData(), vertices[e1->getDest()]->getData() );
+                    Segment s2( vertices[e2->getSrc()]->getData(), vertices[e2->getDest()]->getData() );
+
+                    if ( s1.intersects( s2 ) )
+                    {
+                        std::cout << "we have an intersection!\n";
+                        std::cout << "between ";
+                        printf(" (%.0f %.0f %.0f %.0f) ", s1.p0.x, s1.p0.y, s1.p1.x, s1.p1.y );
+                        printf(" (%.0f %.0f %.0f %.0f) ", s2.p0.x, s2.p0.y, s2.p1.x, s2.p1.y );
+                        std::cout << std::endl;
+                        restart = true;
+
+                        double nx = ( s1.p1.x - s1.p0.x );
+                        double ny = ( s1.p1.y - s1.p0.y );
+                        double mx = ( s2.p1.x - s2.p0.x );
+                        double my = ( s2.p1.y - s2.p0.y );
+                        double y_diff = s1.p0.y - s2.p0.y;
+                        double x_diff = s2.p0.x - s1.p0.x;
+                        double denom = nx*my - mx*ny;
+
+                        std::cout << "s1 length = " << s1.length() << "\n";
+                        std::cout << "s2 length = " << s2.length() << "\n";
+                        std::cout << "x_diff = " << x_diff << ", y_diff = " << y_diff << std::endl;
+                        std::cout << "nx = " << nx << ", ny = " << ny << ", mx = " << mx << ", my = " << my << std::endl; 
+                        double t = ( mx*(y_diff) + my*(x_diff) ) / (denom);
+                        double s = ( nx*(-y_diff) + ny*(-x_diff) ) / (denom);
+                        // calculate point of intersection
+                        Point intersect(s1.p0.x + nx*t, s1.p0.y + ny*t);
+                        std::cout << "intersection point = ( " << intersect.x << ", " << intersect.y << " )\n";
+                        std::cout << "s = " << s << ", t = " << t << "\n";
+                        int intIndex;
+                        int s1_ID = 1;
+                        int s2_ID = 2;
+                        int intersectExists = -1;
+
+                        // add the new intersection point to the graph
+                        // if statements determine whether intersection occurs between the two
+                        // lines, in which case a new point must be added, or if it occurs at an
+                        // endpoint, in which case no new nodes must be added
+                        if ( s == 0 )
+                        {
+                            intIndex = e1->getSrc();
+                            intersectExists = s2_ID;
+                        }
+                        else if ( s == 1 )
+                        {
+                            intIndex = e1->getDest();
+                            intersectExists = s2_ID;
+                        }
+                        else if ( t == 0 )
+                        {
+                            intIndex = e2->getSrc();
+                            intersectExists = s1_ID;
+                        }
+                        else if ( t == 1 )
+                        {
+                            intIndex = e2->getDest();
+                            intersectExists = s1_ID;
+                        }
+                        else
+                        {
+                            intIndex = addVertex( intersect );
+                        }
+
+                        if (intersectExists == s1_ID )
+                        {
+                            // intersection occurs at intIndex, which exists already
+                            // move the current edge to between src and intIndex, and create a new
+                            // edge between intIndex an dest
+                            int old_e1Dest = e1->getDest();
+                            e1->setDest( intIndex );
+                            vertices[old_e1Dest]->getEdgeWithDest( e1->getSrc() )->setSrc( intIndex );
+                            Graph<Point>::addEdges( vertices[intIndex]->getData(), vertices[old_e1Dest]->getData() );
+                        }
+                        else if ( intersectExists == s2_ID )
+                        {
+                            // same as above, except for the other line
+                            int old_e2Dest = e2->getDest();
+                            e2->setDest( intIndex );
+                            vertices[old_e2Dest]->getEdgeWithDest( e2->getSrc() )->setSrc( intIndex );
+                            Graph<Point>::addEdges( vertices[intIndex]->getData(), vertices[old_e2Dest]->getData() );
+                        }
+                        else
+                        {
+                            std::cout << "cut both lines in half\n";
+                            // intersection occurs somewhere between the two lines, therefore do both of the above
+                            // cases, except add a new intersection vertex
+                            int old_e1Dest = e1->getDest();
+
+                            // begin connecting up everything
+                            e1->setDest( intIndex );
+                            vertices[old_e1Dest]->getEdgeWithDest( e1->getSrc() )->setSrc( intIndex );
+                            Graph<Point>::addEdge( vertices[intIndex]->getData(), vertices[e1->getSrc()]->getData() );
+                            Graph<Point>::removeEdge( vertices[old_e1Dest]->getData(), vertices[e1->getSrc()]->getData() );
+                            Graph<Point>::addEdges( vertices[intIndex]->getData(), vertices[old_e1Dest]->getData() );
+
+                            //TODO: need to make a new edge to connect intersection to e1.dest
+                            //also need to connect intersection to both sides of e2,
+                            //finally need to duplicate all of above for edges in other direction
+
+
+                            int old_e2Dest = e2->getDest();
+                            e2->setDest( intIndex );
+                            vertices[old_e2Dest]->getEdgeWithDest( e2->getSrc() )->setSrc( intIndex );
+                            Graph<Point>::addEdge( vertices[intIndex]->getData(), vertices[e2->getSrc()]->getData() );
+                            Graph<Point>::removeEdge( vertices[old_e2Dest]->getData(), vertices[e2->getSrc()]->getData() );
+                            Graph<Point>::addEdges( vertices[intIndex]->getData(), vertices[old_e2Dest]->getData() );
+                        }
+                    }
+                    if ( restart )
+                    {
+                        break;
+                    }
+                }
+                if ( restart )
+                {
+                    break;
+                }
             }
-        }*/
+        }
     }
 
 };
@@ -451,7 +644,7 @@ class PenLift
             return result;
         }
 
-    public:
+    public: //TODO: make this private before submission
         void formatData( std::vector<std::string> &data, int n, SegmentGraph &g )
         {
             // turn data into a graph
@@ -460,6 +653,8 @@ class PenLift
                 Segment seg( parseSegment( segment ) );
                 g.addSegment( seg );
             }
+
+            g.reconstruct();
         }
 
     public:
@@ -470,7 +665,6 @@ class PenLift
             return 0;
         }
 };
-
 
 int main()
 {
